@@ -156,7 +156,7 @@ echo ""
 log_info "全エージェントでClaude起動中..."
 
 # PRESIDENT起動
-tmux send-keys -t president 'claude code' C-m
+tmux send-keys -t president 'claude code --dangerously-skip-permissions' C-m
 
 # PRESIDENT用の自動ロール設定（30秒後）
 (sleep 30 && tmux send-keys -t president C-c && sleep 1 && \
@@ -168,7 +168,7 @@ sleep 1
 MANAGER_AGENTS=("refactor_pm" "code_analyst" "architect" "code_reviewer")
 for i in {0..3}; do
     agent="${MANAGER_AGENTS[$i]}"
-    tmux send-keys -t "refactoring_team:0.$i" 'claude code' C-m
+    tmux send-keys -t "refactoring_team:0.$i" 'claude code --dangerously-skip-permissions' C-m
     
     # Claude起動後、自動でロールメッセージを送信（30秒後）
     (sleep 30 && tmux send-keys -t "refactoring_team:0.$i" C-c && sleep 1 && \
@@ -181,7 +181,7 @@ done
 IMPLEMENTER_AGENTS=("test_designer" "test_writer" "tester" "refactorer")
 for i in {0..3}; do
     agent="${IMPLEMENTER_AGENTS[$i]}"
-    tmux send-keys -t "refactoring_team:1.$i" 'claude code' C-m
+    tmux send-keys -t "refactoring_team:1.$i" 'claude code --dangerously-skip-permissions' C-m
     
     # Claude起動後、自動でロールメッセージを送信（30秒後）
     (sleep 30 && tmux send-keys -t "refactoring_team:1.$i" C-c && sleep 1 && \
