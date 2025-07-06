@@ -1,0 +1,306 @@
+#!/bin/bash
+# Claude初期化フック
+# リファクタリングエージェントシステム起動時の自動設定
+
+set -e
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+HOOKS_DIR="$PROJECT_ROOT/.claude/hooks"
+LOG_FILE="$PROJECT_ROOT/docs/logs/claude_init.log"
+
+# ログ関数
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] [INIT] $1" | tee -a "$LOG_FILE"
+}
+
+log_success() {
+    echo -e "\033[32m✅ [INIT] $1\033[0m" | tee -a "$LOG_FILE"
+}
+
+log_info() {
+    echo -e "\033[34mℹ️ [INIT] $1\033[0m" | tee -a "$LOG_FILE"
+}
+
+# ディレクトリ作成
+mkdir -p "$(dirname "$LOG_FILE")"
+
+log_info "リファクタリングエージェントシステム初期化開始"
+
+# 現在のエージェントロール検出
+detect_agent_role() {
+    local current_dir=$(basename "$(pwd)")
+    local agent_role=""
+    
+    # ディレクトリ名からロール検出
+    case "$current_dir" in
+        *code_analyst*)
+            agent_role="code_analyst"
+            ;;
+        *test_designer*)
+            agent_role="test_designer"
+            ;;
+        *test_writer*)
+            agent_role="test_writer"
+            ;;
+        *tester*)
+            agent_role="tester"
+            ;;
+        *architect*)
+            agent_role="architect"
+            ;;
+        *refactorer*)
+            agent_role="refactorer"
+            ;;
+        *code_reviewer*)
+            agent_role="code_reviewer"
+            ;;
+        *refactor_pm*)
+            agent_role="refactor_pm"
+            ;;
+        *)
+            # .claude_agentファイルから検出
+            if [ -f ".claude_agent" ]; then
+                agent_role=$(grep "AGENT_NAME=" .claude_agent | cut -d'=' -f2)
+            fi
+            ;;
+    esac
+    
+    echo "$agent_role"
+}
+
+# エージェント環境設定
+setup_agent_environment() {
+    local agent_role="$1"
+    
+    if [ -z "$agent_role" ]; then
+        log_info "エージェントロールが特定できません。汎用設定を適用します"
+        return
+    fi
+    
+    log_info "エージェント環境設定: $agent_role"
+    
+    # 指示書の読み込み
+    local instruction_file="$PROJECT_ROOT/instructions/${agent_role}.md"
+    if [ -f "$instruction_file" ]; then
+        log_success "指示書読み込み: $instruction_file"
+        export CLAUDE_INSTRUCTION_FILE="$instruction_file"
+        
+        # Claude起動時の自動メッセージ設定
+        export CLAUDE_AUTO_MESSAGE="あなたは${agent_role}です。instructions/${agent_role}.mdの指示に従ってください。"
+    else
+        log_info "指示書が見つかりません: $instruction_file"
+    fi
+    
+    # ロール固有の環境変数設定
+    export CLAUDE_AGENT_ROLE="$agent_role"
+    export CLAUDE_PROJECT_ROOT="$PROJECT_ROOT"
+    export CLAUDE_LOG_DIR="$PROJECT_ROOT/docs/logs"
+    
+    # ロール別の専用設定
+    case "$agent_role" in
+        "code_analyst")
+            setup_code_analyst_env
+            ;;
+        "test_designer"|"test_writer"|"tester")
+            setup_test_env
+            ;;
+        "architect")
+            setup_architect_env
+            ;;
+        "refactorer")
+            setup_refactorer_env
+            ;;
+        "code_reviewer")
+            setup_reviewer_env
+            ;;
+        "refactor_pm")
+            setup_pm_env
+            ;;
+    esac
+}
+
+# Code Analyst環境設定
+setup_code_analyst_env() {
+    log_info "Code Analyst専用環境設定"
+    export CLAUDE_ANALYSIS_TARGET="src/"
+    export CLAUDE_REPORT_DIR="$PROJECT_ROOT/docs/logs"
+}
+
+# Test関連環境設定
+setup_test_env() {
+    log_info "テスト環境設定"
+    export CLAUDE_TEST_DIR="$PROJECT_ROOT/tests"
+    export CLAUDE_TEST_RUNNER="./scripts/run_and_verify_tests.sh"
+}
+
+# Architect環境設定
+setup_architect_env() {
+    log_info "Architect専用環境設定"
+    export CLAUDE_DESIGN_DIR="$PROJECT_ROOT/docs/design"
+    export CLAUDE_SPEC_DIR="$PROJECT_ROOT/docs/specs"
+}
+
+# Refactorer環境設定
+setup_refactorer_env() {
+    log_info "Refactorer専用環境設定"
+    export CLAUDE_BACKUP_DIR="$PROJECT_ROOT/.backups"
+    export CLAUDE_TEST_BEFORE_REFACTOR="true"
+    mkdir -p "$CLAUDE_BACKUP_DIR"
+}
+
+# Code Reviewer環境設定
+setup_reviewer_env() {
+    log_info "Code Reviewer専用環境設定"
+    export CLAUDE_REVIEW_DIR="$PROJECT_ROOT/docs/logs"
+    export CLAUDE_STATIC_ANALYSIS="true"
+}
+
+# Project Manager環境設定
+setup_pm_env() {
+    log_info "Project Manager専用環境設定"
+    export CLAUDE_DASHBOARD_DIR="$PROJECT_ROOT/docs/logs"
+    export CLAUDE_AGENT_COORDINATION="true"
+}
+
+# プロジェクト設定読み込み
+load_project_config() {
+    log_info "プロジェクト設定読み込み"
+    
+    # CLAUDE.mdの読み込み
+    if [ -f "$PROJECT_ROOT/CLAUDE.md" ]; then
+        log_success "CLAUDE.md読み込み"
+        export CLAUDE_PROJECT_CONFIG="$PROJECT_ROOT/CLAUDE.md"
+    fi
+    
+    # プロジェクト固有設定
+    if [ -f "$PROJECT_ROOT/.claude/settings.local.json" ]; then
+        log_success "ローカル設定読み込み"
+        export CLAUDE_LOCAL_SETTINGS="$PROJECT_ROOT/.claude/settings.local.json"
+    fi
+    
+    # 仕様書の確認
+    if [ -f "$PROJECT_ROOT/docs/specs/refactor_agent_system.md" ]; then
+        log_success "システム仕様書確認"
+        export CLAUDE_SYSTEM_SPEC="$PROJECT_ROOT/docs/specs/refactor_agent_system.md"
+    fi
+}
+
+# ツール可用性チェック
+check_required_tools() {
+    log_info "必要ツールの可用性チェック"
+    
+    local tools=("git" "find" "grep" "awk" "sed")
+    local missing_tools=()
+    
+    for tool in "${tools[@]}"; do
+        if ! command -v "$tool" &> /dev/null; then
+            missing_tools+=("$tool")
+        fi
+    done
+    
+    if [ ${#missing_tools[@]} -eq 0 ]; then
+        log_success "すべての必要ツールが利用可能"
+    else
+        log_info "不足ツール: ${missing_tools[*]}"
+    fi
+    
+    # 追加ツールのチェック
+    if command -v jq &> /dev/null; then
+        export CLAUDE_HAS_JQ="true"
+        log_success "jq利用可能"
+    fi
+    
+    if command -v bc &> /dev/null; then
+        export CLAUDE_HAS_BC="true"
+        log_success "bc利用可能"
+    fi
+}
+
+# Gitリポジトリ状態確認
+check_git_status() {
+    log_info "Gitリポジトリ状態確認"
+    
+    if ! git rev-parse --git-dir &> /dev/null; then
+        log_info "Gitリポジトリではありません"
+        return
+    fi
+    
+    # ブランチ情報
+    local branch=$(git branch --show-current 2>/dev/null || echo "不明")
+    log_info "現在のブランチ: $branch"
+    export CLAUDE_CURRENT_BRANCH="$branch"
+    
+    # 作業ディレクトリの状態
+    if git diff --quiet && git diff --cached --quiet; then
+        log_success "作業ディレクトリはクリーン"
+        export CLAUDE_REPO_CLEAN="true"
+    else
+        log_info "作業ディレクトリに変更あり"
+        export CLAUDE_REPO_CLEAN="false"
+    fi
+}
+
+# 作業履歴の確認
+check_work_history() {
+    log_info "作業履歴確認"
+    
+    # 最後のリファクタリングログ確認
+    local latest_log=$(ls -t "$PROJECT_ROOT/docs/logs"/refactor_log_*.md 2>/dev/null | head -1)
+    if [ -f "$latest_log" ]; then
+        log_success "最新リファクタリングログ: $(basename "$latest_log")"
+        export CLAUDE_LATEST_REFACTOR_LOG="$latest_log"
+    fi
+    
+    # 進捗ダッシュボード確認
+    if [ -f "$PROJECT_ROOT/docs/logs/progress_dashboard.md" ]; then
+        log_success "進捗ダッシュボード確認"
+        export CLAUDE_PROGRESS_DASHBOARD="$PROJECT_ROOT/docs/logs/progress_dashboard.md"
+    fi
+}
+
+# 初期化完了メッセージ
+show_initialization_complete() {
+    local agent_role="$1"
+    
+    cat << EOF
+
+🚀 リファクタリングエージェントシステム初期化完了
+
+## 設定情報
+- エージェントロール: ${agent_role:-"汎用"}
+- プロジェクトルート: $PROJECT_ROOT
+- ログディレクトリ: $PROJECT_ROOT/docs/logs
+- 現在のブランチ: ${CLAUDE_CURRENT_BRANCH:-"不明"}
+
+## 利用可能なコマンド
+- テスト実行: ./scripts/run_and_verify_tests.sh
+- Worktree管理: ./scripts/create_worktree.sh
+- 継続監視: ./scripts/continuous_test_monitoring.sh
+
+## 次のアクション
+指示書に従ってタスクを開始してください。
+EOF
+
+    log_success "初期化完了"
+}
+
+# メイン初期化処理
+main() {
+    cd "$PROJECT_ROOT"
+    
+    # エージェントロール検出
+    local agent_role=$(detect_agent_role)
+    
+    # 各種設定実行
+    load_project_config
+    setup_agent_environment "$agent_role"
+    check_required_tools
+    check_git_status
+    check_work_history
+    
+    # 完了メッセージ表示
+    show_initialization_complete "$agent_role"
+}
+
+# 初期化実行
+main "$@"

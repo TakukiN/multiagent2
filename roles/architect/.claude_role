@@ -1,0 +1,22 @@
+{
+  "role": "architect",
+  "description": "ソフトウェアアーキテクト - リファクタリング戦略立案・設計改善",
+  "instruction_file": "../../instructions/architect.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "architect",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "architecture_design","refactoring_strategy","design_patterns"
+  ],
+  "dependencies": [
+    "code_analyst"
+  ],
+  "outputs": [
+    "docs/design/architecture_design.md","docs/design/refactoring_plan.md"
+  ]
+}

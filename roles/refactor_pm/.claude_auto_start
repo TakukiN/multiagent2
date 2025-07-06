@@ -1,0 +1,20 @@
+#!/bin/bash
+# refactor_pm自動起動設定
+
+# ロール設定
+AGENT_ROLE="refactor_pm"
+INSTRUCTION_FILE="../../instructions/refactor_pm.md"
+
+# Claude起動後の自動実行メッセージ
+AUTO_MESSAGE="あなたはrefactor_pmです。
+
+リファクタリングプロジェクトマネージャーとして、全エージェントを統括し、戦略的かつ効率的なリファクタリングプロジェクトの成功を導いてください。
+
+instructions/refactor_pm.mdの指示に従って行動してください。
+
+チームの準備が完了しました。PRESIDENTからの指示をお待ちしています。"
+
+# 環境変数設定
+export CLAUDE_AGENT_ROLE="$AGENT_ROLE"
+export CLAUDE_INSTRUCTION_FILE="$INSTRUCTION_FILE"
+export CLAUDE_AUTO_MESSAGE="$AUTO_MESSAGE"

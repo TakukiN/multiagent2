@@ -1,0 +1,22 @@
+{
+  "role": "refactorer",
+  "description": "リファクタリング実装者 - 安全なコード改善の実行",
+  "instruction_file": "../../instructions/refactorer.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "refactorer",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "safe_refactoring","code_transformation","technical_debt_resolution"
+  ],
+  "dependencies": [
+    "architect","tester"
+  ],
+  "outputs": [
+    "docs/logs/refactor_log.md"
+  ]
+}

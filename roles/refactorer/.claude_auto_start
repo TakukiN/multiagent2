@@ -1,0 +1,18 @@
+#!/bin/bash
+# refactorer自動起動設定
+
+# ロール設定
+AGENT_ROLE="refactorer"
+INSTRUCTION_FILE="../../instructions/refactorer.md"
+
+# Claude起動後の自動実行メッセージ
+AUTO_MESSAGE="あなたはrefactorerです。
+
+instructions/refactorer.mdの指示に従って専門的な作業を行ってください。
+
+チームの準備が完了しました。他のエージェントと連携してリファクタリングプロジェクトを成功させましょう。"
+
+# 環境変数設定
+export CLAUDE_AGENT_ROLE="$AGENT_ROLE"
+export CLAUDE_INSTRUCTION_FILE="$INSTRUCTION_FILE"
+export CLAUDE_AUTO_MESSAGE="$AUTO_MESSAGE"

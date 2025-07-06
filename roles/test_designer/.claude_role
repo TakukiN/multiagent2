@@ -1,0 +1,22 @@
+{
+  "role": "test_designer",
+  "description": "テスト設計者 - リファクタリング前の振る舞い保護テスト設計",
+  "instruction_file": "../../instructions/test_designer.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "test_designer",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "test_design","behavior_analysis","test_case_generation"
+  ],
+  "dependencies": [
+    "code_analyst"
+  ],
+  "outputs": [
+    "docs/tests/test_design.md","docs/tests/test_cases.csv"
+  ]
+}

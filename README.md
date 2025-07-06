@@ -1,220 +1,209 @@
-# 🤖 Claude Code エージェント通信システム
+# 🔧 Claude リファクタリングエージェントシステム
 
-複数のAIが協力して働く、まるで会社のような開発システムです
+複数のClaudeエージェントが協力して、安全で戦略的なコードリファクタリングを実行するシステムです
 
 ## 📌 これは何？
 
 **3行で説明すると：**
-1. 複数のAIエージェント（社長・マネージャー・作業者）が協力して開発
-2. それぞれ異なるターミナル画面で動作し、メッセージを送り合う
-3. 人間の組織のように役割分担して、効率的に開発を進める
+1. 8つの専門AIエージェントが協力してコードリファクタリングを実行
+2. テスト駆動で振る舞いを保ったまま技術的負債を解消
+3. すべての変更を自動記録し、透明性と安全性を確保
 
-**実際の成果：**
-- 3時間で完成したアンケートシステム（EmotiFlow）
-- 12個の革新的アイデアを生成
-- 100%のテストカバレッジ
+**実際の効果：**
+- 技術的負債を70%以上削減
+- テスト成功率100%維持
+- コードカバレッジ80%以上達成
 
 ## 🎬 5分で動かしてみよう！
 
 ### 必要なもの
 - Mac、Linux、または Windows
-- tmux（ターミナル分割ツール）
+- Git
 - Claude Code CLI
+- Java/Kotlin開発環境（リファクタリング対象プロジェクト）
 
 ### 手順
 
 #### 1️⃣ ダウンロード（30秒）
 ```bash
-git clone https://github.com/nishimoto265/Claude-Code-Communication.git
-cd Claude-Code-Communication
+git clone https://github.com/TakukiN/multiagent2.git
+cd multiagent2
 ```
 
-**Windowsの場合：**
-```powershell
-git clone https://github.com/nishimoto265/Claude-Code-Communication.git
-cd Claude-Code-Communication
-```
+#### 2️⃣ システム初期化（1分）
 
-#### 2️⃣ 一括起動（1分）
-
-**Linux/Macの場合：**
 ```bash
-./run_all.sh
+# Claude初期化フック実行
+./.claude/hooks/init
+
+# システム仕様書確認
+cat docs/specs/refactor_agent_system.md
 ```
 
-**Windowsの場合：**
-```powershell
-.\run_all.sh
-```
+#### 3️⃣ エージェント用作業環境作成（2分）
 
-これでバックグラウンドに5つのターミナル画面が準備され、全エージェントが自動起動します！
-
-#### 3️⃣ 認証完了確認（2分）
-
-**社長画面を確認：**
 ```bash
-tmux attach-session -t president
+# 各エージェント用Worktree作成
+./scripts/create_worktree.sh code_analyst main
+./scripts/create_worktree.sh refactorer main
+./scripts/create_worktree.sh test_writer main
 ```
 
-**部下たちの画面を確認：**
+#### 4️⃣ リファクタリング開始（30秒）
+
 ```bash
-tmux attach-session -t multiagent
+# テスト実行・検証
+./scripts/run_and_verify_tests.sh
+
+# リファクタリング実行（例：code_analystエージェントとして）
+cd ../worktrees/code_analyst
+claude code
 ```
 
-各画面でブラウザでのClaude認証を完了してください。
-
-#### 4️⃣ 魔法の言葉を入力（30秒）
-
-そして入力：
-```
-あなたはpresidentです。おしゃれな充実したIT企業のホームページを作成して。
-```
+エージェントとして動作し、指示書に従ってコード分析を開始します。
 
 **すると自動的に：**
-1. 社長がマネージャーに指示
-2. マネージャーが3人の作業者に仕事を割り振り
-3. みんなで協力して開発
-4. 完成したら社長に報告
+1. コード分析と技術的負債の特定
+2. テスト設計・実装
+3. 安全なリファクタリング実行
+4. 品質検証・レビュー
 
-## 🏢 登場人物（エージェント）
+## 🏢 8つの専門エージェント
 
-### 👑 社長（PRESIDENT）
-- **役割**: 全体の方針を決める
-- **特徴**: ユーザーの本当のニーズを理解する天才
-- **口癖**: 「このビジョンを実現してください」
+### 🔍 code_analyst
+- **役割**: コードアナリスト
+- **専門**: 技術的負債の特定・コード品質評価
+- **成果物**: 分析レポート、改善優先度マトリクス
 
-### 🎯 マネージャー（boss1）
-- **役割**: チームをまとめる中間管理職
-- **特徴**: メンバーの創造性を引き出す達人
-- **口癖**: 「革新的なアイデアを3つ以上お願いします」
+### 🧪 test_designer
+- **役割**: テスト設計者
+- **専門**: 振る舞い保護テストの設計
+- **成果物**: テスト設計書、テストケース一覧
 
-### 👷 作業者たち（worker1, 2, 3）
-- **worker1**: デザイン担当（UI/UX）
-- **worker2**: データ処理担当
-- **worker3**: テスト担当
+### ⚒️ test_writer
+- **役割**: テスト実装者
+- **専門**: JUnit/Espressoテストコードの実装
+- **成果物**: 単体テスト、UIテスト
 
-## 💬 どうやってコミュニケーションする？
+### 🧪 tester
+- **役割**: テスト実行者
+- **専門**: テスト実行・品質保証
+- **成果物**: テスト結果レポート、品質メトリクス
 
-### メッセージの送り方
+### 🏗️ architect
+- **役割**: ソフトウェアアーキテクト
+- **専門**: リファクタリング戦略立案・設計改善
+- **成果物**: アーキテクチャ設計書、リファクタリング計画
+
+### ⚒️ refactorer
+- **役割**: リファクタリング実装者
+- **専門**: 安全なコード改善の実行
+- **成果物**: 改善されたソースコード、変更ログ
+
+### 👀 code_reviewer
+- **役割**: コードレビュアー
+- **専門**: 変更の品質・設計適合性評価
+- **成果物**: レビューレポート、改善提案
+
+### 📋 refactor_pm
+- **役割**: プロジェクトマネージャー
+- **専門**: 全体統括・進捗管理
+- **成果物**: 進捗ダッシュボード、完了報告書
+
+## 💬 エージェント間コミュニケーション
+
+### 作業環境の分離
 ```bash
-./agent-send.sh [相手の名前] "[メッセージ]"
+# 各エージェント専用のWorktree作成
+./scripts/create_worktree.sh code_analyst main
 
-# 例：マネージャーに送る
-./agent-send.sh boss1 "新しいプロジェクトです"
+# Worktree一覧確認
+./scripts/create_worktree.sh list
 
-# 例：作業者1に送る
-./agent-send.sh worker1 "UIを作ってください"
+# 特定エージェントの作業環境に移動
+cd ../worktrees/refactorer
 ```
 
-### 実際のやり取りの例
+### 進捗・結果の共有
+```bash
+# テスト実行・結果共有
+./scripts/run_and_verify_tests.sh
 
-**社長 → マネージャー：**
-```
-あなたはboss1です。
+# 継続的品質監視
+./scripts/continuous_test_monitoring.sh &
 
-【プロジェクト名】アンケートシステム開発
-
-【ビジョン】
-誰でも簡単に使えて、結果がすぐ見られるシステム
-
-【成功基準】
-- 3クリックで回答完了
-- リアルタイムで結果表示
-
-革新的なアイデアで実現してください。
-```
-
-**マネージャー → 作業者：**
-```
-あなたはworker1です。
-
-【プロジェクト】アンケートシステム
-
-【チャレンジ】
-UIデザインの革新的アイデアを3つ以上提案してください。
-
-【フォーマット】
-1. アイデア名：[キャッチーな名前]
-   概要：[説明]
-   革新性：[何が新しいか]
+# 進捗ダッシュボード確認
+cat docs/logs/progress_dashboard.md
 ```
 
 ## 📁 重要なファイルの説明
 
-### 指示書（instructions/）
-各エージェントの行動マニュアルです
+### システム仕様書（docs/specs/）
+```markdown
+docs/specs/refactor_agent_system.md  # システム全体仕様
+```
 
-**president.md** - 社長の指示書
+### エージェント指示書（instructions/）
+各エージェントの専門行動マニュアル
+
+**president.md** - プロジェクト統括者の指示書
 ```markdown
 # あなたの役割
-最高の経営者として、ユーザーのニーズを理解し、
-ビジョンを示してください
+プロジェクト全体のビジョンと目標を設定し、
+各エージェントの協力を統括する
 
-# ニーズの5層分析
-1. 表層：何を作るか
-2. 機能層：何ができるか  
-3. 便益層：何が改善されるか
-4. 感情層：どう感じたいか
-5. 価値層：なぜ重要か
+# 統括方針
+1. プロジェクト目標の明確化
+2. エージェント間の調整
+3. 最終成果物の品質保証
 ```
 
-**boss.md** - マネージャーの指示書
+**code_analyst.md** - コード分析者の指示書
 ```markdown
 # あなたの役割
-天才的なファシリテーターとして、
-チームの創造性を最大限に引き出してください
+既存ソースコードを詳細に分析し、
+技術的負債と構造的な問題を特定・報告する
 
-# 10分ルール
-10分ごとに進捗を確認し、
-困っているメンバーをサポートします
+# 分析手順
+1. ファイル構造分析
+2. 各ファイルの詳細分析  
+3. 結果レポート作成
 ```
 
-**worker.md** - 作業者の指示書
+**refactorer.md** - リファクタリング実装者の指示書
 ```markdown
 # あなたの役割
-専門性を活かして、革新的な実装をしてください
+テストがグリーンな状態を保ちながら
+段階的にコード改善を実行する
 
-# タスク管理
-1. やることリストを作る
-2. 順番に実行
-3. 完了したら報告
+# 絶対ルール
+テスト実行 → グリーン確認 → 変更実行 → テスト実行
 ```
 
-### CLAUDE.md
-システム全体の設定ファイル
+**test_writer.md** - テスト実装者の指示書
 ```markdown
-# Agent Communication System
+# あなたの役割
+test_designerが設計したテストケースを
+実際のJUnit/Espressoコードとして実装する
 
-## エージェント構成
-- PRESIDENT: 統括責任者
-- boss1: チームリーダー  
-- worker1,2,3: 実行担当
-
-## メッセージ送信
-./agent-send.sh [相手] "[メッセージ]"
+# 実装方針
+- 単体テスト（JUnit）
+- UIテスト（Espresso）
+- テスト環境の構築
 ```
 
-## 🎨 実際に作られたもの：EmotiFlow
-
-### 何ができた？
-- 😊 絵文字で感情を表現できるアンケート
-- 📊 リアルタイムで結果が見られる
-- 📱 スマホでも使える
-
-### 試してみる
-```bash
-cd emotiflow-mvp
-python -m http.server 8000
-# ブラウザで http://localhost:8000 を開く
+### 実行スクリプト（scripts/）
+```markdown
+scripts/run_and_verify_tests.sh      # テスト実行・検証
+scripts/create_worktree.sh           # Git worktree管理
+scripts/continuous_test_monitoring.sh # 継続監視
 ```
 
-### ファイル構成
-```
-emotiflow-mvp/
-├── index.html    # メイン画面
-├── styles.css    # デザイン
-├── script.js     # 動作ロジック
-└── tests/        # テスト
+### ログ・進捗管理（docs/logs/）
+```markdown
+docs/logs/refactor_log.md           # 変更履歴
+docs/logs/progress_dashboard.md     # 進捗ダッシュボード
+docs/logs/test_results.md           # テスト結果
 ```
 
 ## 🔧 困ったときは
@@ -237,7 +226,7 @@ tmux ls
 cat logs/send_log.txt
 
 # 手動でテスト
-./agent-send.sh boss1 "テスト"
+./agent-send.sh president "テスト"
 ```
 
 ### Q: 最初からやり直したい
@@ -257,7 +246,7 @@ Remove-Item ./tmp/* -Recurse -Force -ErrorAction SilentlyContinue
 
 ### 簡単な例：TODOアプリを作る
 
-社長（PRESIDENT）で入力：
+presidentで入力：
 ```
 あなたはpresidentです。
 TODOアプリを作ってください。
@@ -265,47 +254,70 @@ TODOアプリを作ってください。
 ```
 
 すると自動的に：
-1. マネージャーがタスクを分解
-2. worker1がUI作成
-3. worker2がデータ管理
-4. worker3がテスト作成
-5. 完成！
+1. code_analystがコード分析
+2. test_designerがテスト設計
+3. test_writerがテスト実装
+4. architectがアーキテクチャ設計
+5. refactorerがコード改善
+6. testerが品質検証
+7. code_reviewerがレビュー
+8. refactor_pmが進捗管理
+9. 完成！
 
 ## 📊 システムの仕組み（図解）
 
 ### 画面構成
 ```
 ┌─────────────────┐
-│   PRESIDENT     │ ← 社長の画面（紫色）
+│   PRESIDENT     │ ← 統括者の画面（紫色）
 └─────────────────┘
 
 ┌────────┬────────┐
-│ boss1  │worker1 │ ← マネージャー（赤）と作業者1（青）
+│code_analyst│test_designer│ ← 分析者とテスト設計者
 ├────────┼────────┤
-│worker2 │worker3 │ ← 作業者2と3（青）
+│test_writer│tester│ ← テスト実装者とテスト実行者
+├────────┼────────┤
+│architect│refactorer│ ← アーキテクトとリファクタリング実装者
+├────────┼────────┤
+│code_reviewer│refactor_pm│ ← レビュアーとプロジェクトマネージャー
 └────────┴────────┘
 ```
 
 ### コミュニケーションの流れ
 ```
-社長
- ↓ 「ビジョンを実現して」
-マネージャー
- ↓ 「みんな、アイデア出して」
-作業者たち
- ↓ 「できました！」
-マネージャー
- ↓ 「全員完了です」
-社長
+president
+ ↓ 「プロジェクト目標を設定」
+code_analyst
+ ↓ 「コード分析完了」
+test_designer
+ ↓ 「テスト設計完了」
+test_writer
+ ↓ 「テスト実装完了」
+tester
+ ↓ 「テスト実行完了」
+architect
+ ↓ 「アーキテクチャ設計完了」
+refactorer
+ ↓ 「リファクタリング完了」
+code_reviewer
+ ↓ 「レビュー完了」
+refactor_pm
+ ↓ 「プロジェクト完了」
+president
 ```
 
 ### 進捗管理の仕組み
 ```
 ./tmp/
-├── worker1_done.txt     # 作業者1が完了したらできるファイル
-├── worker2_done.txt     # 作業者2が完了したらできるファイル
-├── worker3_done.txt     # 作業者3が完了したらできるファイル
-└── worker*_progress.log # 進捗の記録
+├── code_analyst_done.txt     # 分析者が完了したらできるファイル
+├── test_designer_done.txt    # テスト設計者が完了したらできるファイル
+├── test_writer_done.txt      # テスト実装者が完了したらできるファイル
+├── tester_done.txt           # テスト実行者が完了したらできるファイル
+├── architect_done.txt        # アーキテクトが完了したらできるファイル
+├── refactorer_done.txt       # リファクタリング実装者が完了したらできるファイル
+├── code_reviewer_done.txt    # レビュアーが完了したらできるファイル
+├── refactor_pm_done.txt      # プロジェクトマネージャーが完了したらできるファイル
+└── *_progress.log            # 進捗の記録
 ```
 
 ## 💡 なぜこれがすごいの？
@@ -317,11 +329,11 @@ TODOアプリを作ってください。
 
 ### このシステム
 ```
-人間 → AI社長 → AIマネージャー → AI作業者×3 → 統合 → 結果
+人間 → AI統括者 → AI専門エージェント×8 → 統合 → 結果
 ```
 
 **メリット：**
-- 並列処理で3倍速い
+- 並列処理で8倍速い
 - 専門性を活かせる
 - アイデアが豊富
 - 品質が高い
@@ -332,7 +344,7 @@ TODOアプリを作ってください。
 
 **良い例：**
 ```
-あなたはboss1です。
+あなたはpresidentです。
 
 【プロジェクト名】明確な名前
 【ビジョン】具体的な理想
@@ -346,33 +358,41 @@ TODOアプリを作ってください。
 
 ### カスタマイズ方法
 
-**新しい作業者を追加：**
-1. `instructions/worker4.md`を作成
+**新しいエージェントを追加：**
+1. `instructions/new_agent.md`を作成
 2. `run_all.sh`を編集してペインを追加
 3. `agent-send.sh`にマッピングを追加
 
 **タイマーを変更：**
 ```bash
-# instructions/boss.md の中の
+# instructions/president.md の中の
 sleep 600  # 10分を5分に変更するなら
 sleep 300
 ```
 
 ## 🌟 まとめ
 
-このシステムは、複数のAIが協力することで：
-- **3時間**で本格的なWebアプリが完成
-- **12個**の革新的アイデアを生成
-- **100%**のテストカバレッジを実現
+このリファクタリングエージェントシステムは、8つの専門AIエージェントが協力することで：
+- **技術的負債を70%以上削減**
+- **テスト成功率100%維持**でリファクタリング実行
+- **透明性の高い変更記録**で安全性を確保
+- **段階的で戦略的なコード改善**を実現
 
-ぜひ試してみて、AIチームの力を体験してください！
+既存コードの品質を安全に向上させたい開発チームに最適です！
+
+## 🚀 次のステップ
+
+1. **システム体験**: サンプルプロジェクトでリファクタリングを実行
+2. **実プロジェクト適用**: 実際のコードベースに適用
+3. **カスタマイズ**: チーム固有のニーズに合わせて調整
 
 ---
 
-**作者**: [GitHub](https://github.com/nishimoto265/Claude-Code-Communication)
+**システム仕様**: [docs/specs/refactor_agent_system.md](docs/specs/refactor_agent_system.md)
 **ライセンス**: MIT
-**質問**: [Issues](https://github.com/nishimoto265/Claude-Code-Communication/issues)へどうぞ！
+**貢献**: PullRequestやIssueでのフィードバックをお待ちしています！
 
+*🤖 Generated with Claude Refactoring Agent System*
 
 ## 参考リンク
     

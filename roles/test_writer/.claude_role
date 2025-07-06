@@ -1,0 +1,22 @@
+{
+  "role": "test_writer",
+  "description": "テスト実装者 - JUnit/Espressoテストコードの実装",
+  "instruction_file": "../../instructions/test_writer.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "test_writer",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "junit_implementation","espresso_implementation","mock_creation"
+  ],
+  "dependencies": [
+    "test_designer"
+  ],
+  "outputs": [
+    "tests/unit/","tests/ui/"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "role": "tester",
+  "description": "テスト実行者 - テストの実行・検証・品質保証",
+  "instruction_file": "../../instructions/tester.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "tester",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "test_execution","quality_assurance","coverage_analysis"
+  ],
+  "dependencies": [
+    "test_writer"
+  ],
+  "outputs": [
+    "docs/logs/test_results.md","docs/logs/test_history.json"
+  ]
+}

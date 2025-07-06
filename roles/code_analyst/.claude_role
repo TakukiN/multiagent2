@@ -1,0 +1,26 @@
+{
+  "role": "code_analyst",
+  "description": "コードアナリスト - 既存ソースコードの分析と技術的負債の特定",
+  "instruction_file": "../../instructions/code_analyst.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "code_analyst",
+    "CLAUDE_ANALYSIS_TARGET": "src/",
+    "CLAUDE_REPORT_DIR": "../../docs/logs",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "code_analysis",
+    "static_analysis", 
+    "metrics_collection",
+    "technical_debt_detection"
+  ],
+  "dependencies": [],
+  "outputs": [
+    "docs/logs/analysis_report.md",
+    "docs/logs/technical_debt_matrix.json"
+  ]
+}

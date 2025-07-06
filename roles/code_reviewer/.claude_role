@@ -1,0 +1,22 @@
+{
+  "role": "code_reviewer",
+  "description": "コードレビュアー - 変更の品質・設計適合性評価",
+  "instruction_file": "../../instructions/code_reviewer.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "code_reviewer",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "code_review","quality_assessment","design_validation"
+  ],
+  "dependencies": [
+    "refactorer"
+  ],
+  "outputs": [
+    "docs/logs/code_review.md"
+  ]
+}

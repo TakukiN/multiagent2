@@ -1,11 +1,22 @@
 #!/bin/bash
 
-# 🚀 Agent間メッセージ送信スクリプト
+# 🚀 リファクタリングエージェント間メッセージ送信スクリプト
 
 # エージェント→tmuxターゲット マッピング
 get_agent_target() {
     case "$1" in
         "president") echo "president" ;;
+        # Window1: 管理系エージェント
+        "refactor_pm") echo "refactoring_team:0.0" ;;
+        "code_analyst") echo "refactoring_team:0.1" ;;
+        "architect") echo "refactoring_team:0.2" ;;
+        "code_reviewer") echo "refactoring_team:0.3" ;;
+        # Window2: 実装系エージェント
+        "test_designer") echo "refactoring_team:1.0" ;;
+        "test_writer") echo "refactoring_team:1.1" ;;
+        "tester") echo "refactoring_team:1.2" ;;
+        "refactorer") echo "refactoring_team:1.3" ;;
+        # 旧エージェント（互換性のため残す）
         "boss1") echo "multiagent:0.0" ;;
         "worker1") echo "multiagent:0.1" ;;
         "worker2") echo "multiagent:0.2" ;;
@@ -16,35 +27,48 @@ get_agent_target() {
 
 show_usage() {
     cat << EOF
-🤖 Agent間メッセージ送信
+🔧 リファクタリングエージェント間メッセージ送信
 
 使用方法:
   $0 [エージェント名] [メッセージ]
   $0 --list
 
-利用可能エージェント:
-  president - プロジェクト統括責任者
-  boss1     - チームリーダー  
-  worker1   - 実行担当者A
-  worker2   - 実行担当者B
-  worker3   - 実行担当者C
+リファクタリングエージェント:
+  president      - プロジェクト統括責任者
+  refactor_pm    - リファクタリングPM
+  code_analyst   - コード分析者
+  architect      - ソフトウェアアーキテクト
+  test_designer  - テスト設計者
+  test_writer    - テスト実装者
+  tester         - テスト実行者
+  refactorer     - リファクタリング実装者
+  code_reviewer  - コードレビュアー
 
 使用例:
-  $0 president "指示書に従って"
-  $0 boss1 "Hello World プロジェクト開始指示"
-  $0 worker1 "作業完了しました"
+  $0 refactor_pm "リファクタリングプロジェクトを開始してください"
+  $0 code_analyst "技術的負債の分析を開始してください"
+  $0 refactorer "コード改善を実行してください"
 EOF
 }
 
 # エージェント一覧表示
 show_agents() {
     echo "📋 利用可能なエージェント:"
-    echo "=========================="
-    echo "  president → president:0     (プロジェクト統括責任者)"
-    echo "  boss1     → multiagent:0.0  (チームリーダー)"
-    echo "  worker1   → multiagent:0.1  (実行担当者A)"
-    echo "  worker2   → multiagent:0.2  (実行担当者B)" 
-    echo "  worker3   → multiagent:0.3  (実行担当者C)"
+    echo "=================================="
+    echo "【統括】"
+    echo "  president      → president:0          (プロジェクト統括責任者)"
+    echo ""
+    echo "【リファクタリングチーム - Window1: 管理系】"
+    echo "  refactor_pm    → refactoring_team:0.0 (リファクタリングPM)"
+    echo "  code_analyst   → refactoring_team:0.1 (コード分析者)"
+    echo "  architect      → refactoring_team:0.2 (ソフトウェアアーキテクト)"
+    echo "  code_reviewer  → refactoring_team:0.3 (コードレビュアー)"
+    echo ""
+    echo "【リファクタリングチーム - Window2: 実装系】"
+    echo "  test_designer  → refactoring_team:1.0 (テスト設計者)"
+    echo "  test_writer    → refactoring_team:1.1 (テスト実装者)"
+    echo "  tester         → refactoring_team:1.2 (テスト実行者)"
+    echo "  refactorer     → refactoring_team:1.3 (リファクタリング実装者)"
 }
 
 # ログ記録

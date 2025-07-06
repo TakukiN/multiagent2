@@ -1,0 +1,22 @@
+{
+  "role": "refactor_pm",
+  "description": "プロジェクトマネージャー - 全体統括・進捗管理",
+  "instruction_file": "../../instructions/refactor_pm.md",
+  "working_directory": "../../",
+  "environment": {
+    "CLAUDE_AGENT_ROLE": "refactor_pm",
+    "CLAUDE_PROJECT_ROOT": "../../"
+  },
+  "hooks": {
+    "init": "../../.claude/hooks/init"
+  },
+  "capabilities": [
+    "project_management","progress_monitoring","stakeholder_coordination"
+  ],
+  "dependencies": [
+    ""
+  ],
+  "outputs": [
+    "docs/logs/progress_dashboard.md","docs/logs/weekly_report.md"
+  ]
+}
